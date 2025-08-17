@@ -39,7 +39,9 @@ The get_top_k_referrers function is implemented as described in the prompt, by c
 The choice of an appropriate k is dependent on the business objective:
 
 For a Public Leaderboard: A small, fixed number like k = 10 or k = 20 is suitable for display and encouraging competition.
+
 For a Marketing Campaign: k could be a larger number like 50 or 100 to identify a significant group of key influencers to reward.
+
 For Internal Analysis: k is often best calculated as a percentage of the total user base (e.g., the top 1%) to make the analysis scalable as the network grows.
 
 ### Part 3: Comparison of Influence Metrics
