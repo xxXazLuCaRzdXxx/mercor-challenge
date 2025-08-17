@@ -1,6 +1,8 @@
-# Python bytecode and cache
+# Python bytecode, cache, and compiled files
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # Virtual environments
 venv/
@@ -10,6 +12,14 @@ env/
 # IDE and editor configuration
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS-generated files
 .DS_Store
+Thumbs.db
+
+# Testing artifacts
+.pytest_cache/
+.coverage
+htmlcov/
