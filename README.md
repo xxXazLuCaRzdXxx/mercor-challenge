@@ -28,7 +28,9 @@ The core of the referral network is implemented in the ReferralNetwork class. Th
 The implementation strictly enforces the three required constraints:
 
 Unique Referrer Constraint: This is enforced by a separate referrers dictionary that maps a candidate to their unique referrer. This allows for an O(1) check to see if a candidate has already been referred before adding a new one.
+
 Acyclic Graph Constraint: To prevent cycles, the code performs an efficient upstream traversal from the referrer. Before adding a new edge referrer -> candidate, it checks if the candidate is an ancestor of the referrer. This check is highly efficient, with a time complexity of O(d) where d is the depth of the referrer in the network.
+
 No Self-Referrals: A simple check (referrer == candidate) is performed at the beginning of the add_referral method.
 
 ### Part 2: Top Referrers & Choosing k
