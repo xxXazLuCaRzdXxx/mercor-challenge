@@ -1,4 +1,3 @@
-
 import unittest
 
 from source.Simulation import simulate, days_to_target

@@ -1,5 +1,3 @@
-# Part 5: Referral Bonus Optimization
-
 import unittest
 from source.Optimization import min_bonus_for_target
 from source.Simulation import simulate

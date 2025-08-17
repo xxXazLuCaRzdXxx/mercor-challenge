@@ -1,5 +1,3 @@
-# tests/test_ReferralNetwork.py
-
 import unittest
 from source.ReferralNetwork import ReferralNetwork
 
