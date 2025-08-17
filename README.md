@@ -1,6 +1,6 @@
 # Mercor Challenge: Referral Network
 
-This repository contains the complete solution for the Mercor coding challenge, implemented in Python. The project is organized into logical modules for the referral network graph, simulation, and optimization logic, and includes a comprehensive test suite that validates all functionality.
+This repository contains the complete solution for the Mercor coding challenge, implemented in Python. The project is organized into logical modules for the referral network graph, simulation, and optimization logic, and includes a comprehensive test suite that validates all functionality. It took me around 6.5-7.5 hours for completing the project. I have used the following AI tool, Gemini Pro 2.5 (free version) for helping me build this project. More specifically, it helped me to brainstorm and eliminate various approaches for building methods, desigining the structure, writing tests, writing clear documentation and validating the solution. It did help me code a lot but in the end I made a lot of changes in the implementation.
 
 ## Language & Setup
 
