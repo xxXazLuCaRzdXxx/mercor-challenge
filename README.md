@@ -9,7 +9,9 @@ Version: 3.11.0
 Dependencies: None
 
 To set up the project, simply clone the repository. No dependency installation is required.
+
 git clone https://github.com/xxXazLuCaRzdXxx/mercor-challenge
+
 cd mercor-challenge
 
 ## Running Tests
