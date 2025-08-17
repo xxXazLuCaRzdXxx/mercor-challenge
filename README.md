@@ -63,7 +63,7 @@ Here V is the number of users (vertices), E is the number of referrals (edges), 
 - Time Complexity: O(d). The performance is dominated by the cycle check, which in the worst case traverses the entire chain of referrers above the given referrer, a path of length d.
 - Space Complexity: O(1). The operation uses a fixed amount of extra memory, regardless of the graph's size.
 
-3. get_total_referral_count(user):
+2. get_total_referral_count(user):
 
 - Implementation: This method performs a Breadth-First Search (BFS) starting from the given user's direct referrals. Due to the "unique referrer" constraint, the referral graph is a forest, so a visited set is not required for correctness.
 - Time Complexity: O(V_sub + E_sub), where V_sub and E_sub are the number of users and referrals in the subgraph downstream from the user. This is the standard optimal complexity for a graph traversal.
