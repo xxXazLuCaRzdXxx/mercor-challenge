@@ -99,5 +99,102 @@ class TestReferralNetworkPart1(unittest.TestCase):
         self.assertNotIn('A', self.network.get_direct_referrals('C'), "The cycle-creating referral should not be added.")
         self.assertIsNone(self.network.referrers.get('A'), "A's referrer should remain None.")
 
+class TestReferralNetworkParts2And3(unittest.TestCase):
+
+    def setUp(self):
+        """
+        Set up a complex, non-trivial network to test advanced functions.
+        The structure is:
+        - Two main networks, one rooted at A, one at H.
+        - A is a major influencer.
+        - B is a sub-influencer under A.
+        - K is an isolated user who has referred no one.
+        """
+        self.network = ReferralNetwork()
+        referrals = [
+            ('A', 'B'), ('A', 'C'),
+            ('B', 'D'), ('B', 'E'),
+            ('C', 'F'),
+            ('D', 'G'),
+            ('H', 'I'), ('H', 'J')
+        ]
+        for referrer, candidate in referrals:
+            self.network.add_referral(referrer, candidate)
+        
+        # Adding K, an isolated user who refers no one
+        self.network.add_user('K')
+
+    # Part 2 Tests
+
+    def test_get_total_referral_count(self):
+        """
+        Tests the calculation of total downstream reach for various users.
+        """
+        # A is the root of the largest network
+        self.assertEqual(self.network.get_total_referral_count('A'), 6, "Reach of A should be 6 (B,C,D,E,F,G)")
+        # B is a mid-level influencer
+        self.assertEqual(self.network.get_total_referral_count('B'), 3, "Reach of B should be 3 (D,E,G)")
+        # H is the root of the smaller network
+        self.assertEqual(self.network.get_total_referral_count('H'), 2, "Reach of H should be 2 (I,J)")
+        # D has a single person in their downstream
+        self.assertEqual(self.network.get_total_referral_count('D'), 1, "Reach of D should be 1 (G)")
+        # A leaf node like G should have a reach of 0
+        self.assertEqual(self.network.get_total_referral_count('G'), 0, "Reach of a leaf node (G) should be 0")
+        # An isolated user K should have a reach of 0
+        self.assertEqual(self.network.get_total_referral_count('K'), 0, "Reach of an isolated user (K) should be 0")
+        # A non-existent user should have a reach of 0
+        self.assertEqual(self.network.get_total_referral_count('Z'), 0, "Reach of a non-existent user should be 0")
+
+    def test_get_top_k_referrers(self):
+        """
+        Tests the ranking of top referrers by their total reach.
+        """
+        # Test getting the top 3
+        # Expected reach: A=6, B=3, H=2, C=1, D=1, others=0
+        top_3 = self.network.get_top_k_referrers(3)
+        self.assertEqual(top_3, ['A', 'B', 'H'])
+
+        # Test getting just the top 1
+        top_1 = self.network.get_top_k_referrers(1)
+        self.assertEqual(top_1, ['A'])
+
+        # Test edge case k=0
+        self.assertEqual(self.network.get_top_k_referrers(0), [])
+        
+        # Test getting the top 5 (note: order of C and D is not guaranteed as they have the same reach)
+        top_5 = self.network.get_top_k_referrers(5)
+        self.assertEqual(top_5[:3], ['A', 'B', 'H'])
+        self.assertIn('C', top_5[3:])
+        self.assertIn('D', top_5[3:])
+
+
+    # --- Part 3: Test Influencer Metrics ---
+
+    def test_get_influencers_by_unique_reach(self):
+        """
+        Tests the greedy algorithm for finding influencers by unique reach expansion.
+        """
+        # Step 1: 'A' is chosen, covering 6 unique users {B,C,D,E,F,G}.
+        # Step 2: 'H' is chosen, covering 2 new unique users {I,J}.
+        # Step 3: All other users (B,C,D) now have a new contribution of 0. Loop terminates.
+        expected_ranking = ['A', 'H']
+        self.assertEqual(self.network.get_influencers_by_unique_reach(), expected_ranking)
+
+    def test_get_influencers_by_flow_centrality(self):
+        """
+        Tests the ranking of "broker" users based on flow centrality.
+        """
+        # Pre-calculated scores based on the setUp graph:
+        # - B is on paths A->D, A->E, A->G (score=3)
+        # - D is on paths A->G, B->G (score=2)
+        # - C is on path A->F (score=1)
+        # - All other nodes are either roots or leaves of paths, so they don't lie *between*
+        #   any two other nodes. Their scores are 0.
+        
+        ranked_list = self.network.get_influencers_by_flow_centrality()
+        
+        # We can confidently assert the order of the top 3 brokers.
+        self.assertEqual(ranked_list[:3], ['B', 'D', 'C'])
+
 if __name__ == '__main__':
     unittest.main()
