@@ -16,7 +16,9 @@ cd mercor-challenge
 
 ## Running Tests
 
-Here is the command for running the test cases: python -m unittest discover
+Here is the command for running the test cases: 
+
+python -m unittest discover
 
 ## Design Choices & Implementation Notes
 
