@@ -59,51 +59,51 @@ Here V is the number of users (vertices), E is the number of referrals (edges), 
 #### ReferralNetwork Class
 
 1. add_referral(referrer, candidate):
-Implementation: The method first runs O(1) checks for self-referrals and unique referrers. The main work is the cycle check, which performs an upstream traversal from the referrer to see if the candidate is an ancestor.
-Time Complexity: O(d). The performance is dominated by the cycle check, which in the worst case traverses the entire chain of referrers above the given referrer, a path of length d.
-Space Complexity: O(1). The operation uses a fixed amount of extra memory, regardless of the graph's size.
+*Implementation: The method first runs O(1) checks for self-referrals and unique referrers. The main work is the cycle check, which performs an upstream traversal from the referrer to see if the candidate is an ancestor.
+*Time Complexity: O(d). The performance is dominated by the cycle check, which in the worst case traverses the entire chain of referrers above the given referrer, a path of length d.
+*Space Complexity: O(1). The operation uses a fixed amount of extra memory, regardless of the graph's size.
 
-2. get_total_referral_count(user):
+3. get_total_referral_count(user):
 
-Implementation: This method performs a Breadth-First Search (BFS) starting from the given user's direct referrals. Due to the "unique referrer" constraint, the referral graph is a forest, so a visited set is not required for correctness.
-Time Complexity: O(V_sub + E_sub), where V_sub and E_sub are the number of users and referrals in the subgraph downstream from the user. This is the standard optimal complexity for a graph traversal.
-Space Complexity: O(V_sub). In the worst case (a very wide and shallow referral tree), the BFS queue could hold all nodes at a single level.
+*Implementation: This method performs a Breadth-First Search (BFS) starting from the given user's direct referrals. Due to the "unique referrer" constraint, the referral graph is a forest, so a visited set is not required for correctness.
+*Time Complexity: O(V_sub + E_sub), where V_sub and E_sub are the number of users and referrals in the subgraph downstream from the user. This is the standard optimal complexity for a graph traversal.
+*Space Complexity: O(V_sub). In the worst case (a very wide and shallow referral tree), the BFS queue could hold all nodes at a single level.
 
 3. get_top_k_referrers(k):
 
-Implementation: This function iterates through every user in the graph. For each user, it calls get_total_referral_count to calculate their full downstream reach. The results are stored, sorted in descending order by reach, and the names of the top k users are returned.
-Time Complexity: O(V * (V + E)). The function calls get_total_referral_count (which can be up to O(V+E)) for each of the V users. The final sort of O(V log V) is overshadowed by this main loop.
-Space Complexity: O(V). Space is required to store the reach count for all V users before sorting.
+*Implementation: This function iterates through every user in the graph. For each user, it calls get_total_referral_count to calculate their full downstream reach. The results are stored, sorted in descending order by reach, and the names of the top k users are returned.
+*Time Complexity: O(V * (V + E)). The function calls get_total_referral_count (which can be up to O(V+E)) for each of the V users. The final sort of O(V log V) is overshadowed by this main loop.
+*Space Complexity: O(V). Space is required to store the reach count for all V users before sorting.
 
 4. get_influencers_by_unique_reach():
 
-Implementation: This follows a greedy algorithm. It first pre-computes the reach set for all users using a memoized recursion (O(V+E)). Then, it enters a loop that runs up to V times. In each iteration, it finds the user who adds the most new members to the globally covered set, which involves iterating over the remaining users and performing set difference operations.
-Time Complexity: O(V^2 * avg_set_size). The nested loop structure for the greedy selection dominates the complexity.
-Space Complexity: O(V^2) in the worst case. The space is required to store the reach set for every user, if in a graph the first user's set contains all other V users.
+*Implementation: This follows a greedy algorithm. It first pre-computes the reach set for all users using a memoized recursion (O(V+E)). Then, it enters a loop that runs up to V times. In each iteration, it finds the user who adds the most new members to the globally covered set, which involves iterating over the remaining users and performing set difference operations.
+*Time Complexity: O(V^2 * avg_set_size). The nested loop structure for the greedy selection dominates the complexity.
+*Space Complexity: O(V^2) in the worst case. The space is required to store the reach set for every user, if in a graph the first user's set contains all other V users.
 
 5. get_influencers_by_flow_centrality():
 
-Implementation: This is a clear, correct implementation as prioritized by the prompt. It first computes all-pairs shortest paths by running BFS from every node (O(V * (V+E))). It then iterates through every possible triplet of users (s, t, v) to check if v lies on a shortest path between s and t.
-Time Complexity: O(V^3). The three nested loops for checking every triplet are the dominant factor.
-Space Complexity: O(V^2). This is required to store the distance matrix for all pairs of users.
+*Implementation: This is a clear, correct implementation as prioritized by the prompt. It first computes all-pairs shortest paths by running BFS from every node (O(V * (V+E))). It then iterates through every possible triplet of users (s, t, v) to check if v lies on a shortest path between s and t.
+*Time Complexity: O(V^3). The three nested loops for checking every triplet are the dominant factor.
+*Space Complexity: O(V^2). This is required to store the distance matrix for all pairs of users.
 
 #### Simulation & Optimization Functions:
 
 6. simulate(p, days):
 
-Implementation: This function simulates network growth for a fixed number of days. Instead of tracking thousands of individual agents, it groups users into "cohorts" to efficiently calculate the expected number of new referrals each day. This model correctly handles the retirement of cohorts that reach their 10-referral capacity. A safety limit (MAX_SIMULATION_DAYS) is included as a circuit breaker to prevent impractically long simulations (for handling Part 5 test cases), which could otherwise occur with very low referral probabilities.
-Time Complexity: O(days * C). The complexity is linear with respect to the number of days simulated and the number of active cohorts.
-Space Complexity: O(days + C). O(days) is for the results list, and O(C) is for the queue holding the active cohorts.
+*Implementation: This function simulates network growth for a fixed number of days. Instead of tracking thousands of individual agents, it groups users into "cohorts" to efficiently calculate the expected number of new referrals each day. This model correctly handles the retirement of cohorts that reach their 10-referral capacity. A safety limit (MAX_SIMULATION_DAYS) is included as a circuit breaker to prevent impractically long simulations (for handling Part 5 test cases), which could otherwise occur with very low referral probabilities.
+*Time Complexity: O(days * C). The complexity is linear with respect to the number of days simulated and the number of active cohorts.
+**Space Complexity: O(days + C). O(days) is for the results list, and O(C) is for the queue holding the active cohorts.
 
 7. days_to_target(p, target_total):
 
-Implementation: This function simulates day by day until a target_total is reached. It has a safety circuit breaker (D = MAX_SIMULATION_DAYS) to prevent impractically long loops.
-Time Complexity: O(D * C). In the worst case, it simulates up to D days, processing C cohorts each day.
-Space Complexity: O(C). The space is primarily for the active_cohorts queue.
+*Implementation: This function simulates day by day until a target_total is reached. It has a safety circuit breaker (D = MAX_SIMULATION_DAYS) to prevent impractically long loops.
+*Time Complexity: O(D * C). In the worst case, it simulates up to D days, processing C cohorts each day.
+*Space Complexity: O(C). The space is primarily for the active_cohorts queue.
 
 8. min_bonus_for_target(days, target_hires, adoption_prob_func, eps):
 
-Implementation: This function uses a binary search to find the minimum required bonus. In each step of the search, it calls the days_to_target function to evaluate the effectiveness of the chosen bonus.
-Time Complexity: O(log(N) * D * C). The binary search over the bonus range N takes log(N) steps. Each step is dominated by the call to days_to_target, which has a complexity of O(D * C).
-Space Complexity: O(C). The space complexity is determined by the days_to_target helper function.
+*Implementation: This function uses a binary search to find the minimum required bonus. In each step of the search, it calls the days_to_target function to evaluate the effectiveness of the chosen bonus.
+*Time Complexity: O(log(N) * D * C). The binary search over the bonus range N takes log(N) steps. Each step is dominated by the call to days_to_target, which has a complexity of O(D * C).
+*Space Complexity: O(C). The space complexity is determined by the days_to_target helper function.
 
